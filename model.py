@@ -129,7 +129,7 @@ ax = fig.add_subplot(111, projection='3d')
 # ax.plot(c, z, s, 'black')
 # ax.plot(c, s, z, 'black')
 
-consts = [pegasi]
+consts = [vulpeculae]
 consts = constellations
 greek_letters = [
     "alpha",
