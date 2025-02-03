@@ -189,15 +189,19 @@ def starConverter(star):
 
     # print(n, mag)
     if mag == "" or mag == "n/a":
-        mag = "0"
+        mag = "None"
     elif "(" in mag:
         mag = mag.split("(")[0]
     elif "–" in mag:
         mag = mag.split("–")[1]
     elif mag.split("-")[0] != "":
         mag = mag.split("-")[0]
+    if mag != "None":
+        wr_mag = float(mag.replace(",", ".").replace("−", "-"))
+    else:
+        wr_mag = "None"
 
-    return pyname, f"""{pyname} = Star("{n.replace("_", " ")}", hourMinSec2deg({int(h)}, {int(m)}, {float(s.replace("n", ".").replace(";", "."))}), degMinSec2deg({int(de[:-1].replace("−", "-"))}, {int(mi[:-1])}, {float(se[:-1].replace("," ,"."))}), {float(mag.replace(",", ".").replace("−", "-"))})"""
+    return pyname, f"""{pyname} = Star("{n.replace("_", " ")}", hourMinSec2deg({int(h)}, {int(m)}, {float(s.replace("n", ".").replace(";", "."))}), degMinSec2deg({int(de[:-1].replace("−", "-"))}, {int(mi[:-1])}, {float(se[:-1].replace("," ,"."))}), {wr_mag})"""
 
 constellations = reader("constellationList.html")
 
