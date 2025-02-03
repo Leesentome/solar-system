@@ -258,6 +258,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     const ground = new Ground(gl, simpleProgram, [0, 1, 0]);
     const lightPos = [0, 10, 0];
 
+    const long = 0;
+    const lat = 0;
+    const up = [1, 0, 0];
+
     // INIT ENV
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
@@ -283,7 +287,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             -Math.cos(pitch) * Math.cos(yaw)
         ];
         let target = [eye[0] + dir[0], eye[1] + dir[1], eye[2] + dir[2]];
-        const up = [0, 1, 0];
         mat4.lookAt(viewMatrix, eye, target, up);
         
         gl.useProgram(starProgram.program);

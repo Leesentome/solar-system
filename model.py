@@ -32,11 +32,11 @@ class Planet:
         self.s = s
         self.f = f
 
-    def get_pos(self, year, month, day, hour):
+    def get_pos(self, year, month, day, hour, minute, second):
         if month <= 2:
             year -= 1
             month += 12
-        Teph = int(365.25 * year) + int(30.6001 * (month + 1)) + day + hour / 24 + 1720981.5
+        Teph = int(365.25 * year) + int(30.6001 * (month + 1)) + day + hour / 24 + minute / 1440 + second / 86400 + 1720981.5
         T = (Teph - 2451545) / 36525
 
         a = self.a0 + self.ap * T
@@ -87,6 +87,33 @@ neptune = Planet("Neptune", 60226, 30.06992276, 0.00026291, 0.00859048, 0.000051
 
 planetes = [mercure, venus, terre, mars, jupiter, saturne, uranus, neptune]
 
+def julianDay(year, month, day):
+    if month <= 2:
+        month += 12
+        year -= 1
+    
+    A = int(year / 100)
+    
+    if(year < 1582):
+        B = 0
+    else:
+        B = int(2 - A + int(A / 4))
+    
+    return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + B - 1524.5
+
+def sideralTimeGreewich(julianday):
+    T = (julianday - 2451545.0) / 36525,
+    temp  = (280.46061837 + 360.98564736629 * (julianday - 2451545) + 0.000387933 * T * T - (T * T * T) / 38710000) % 360
+    return temp
+
+def localSideralTime(longitude, year, month, day, hour, minute, second):
+    D = day + hour / 24 + minute / 1440 + second / 86400
+    return sideralTimeGreewich(julianDay(year, month, D)) + longitude
+
+def zenith_direction(latitude, longitude, year, month, day, hour, minute, second):
+    lst = localSideralTime(longitude, year, month, day, hour, minute, second)
+    return lst, latitude
+
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
@@ -101,24 +128,28 @@ ax = fig.add_subplot(111, projection='3d')
 #         for j in range(1, lenm + 1):
 #             print(f"\r{j:02}/{m+1:02}/{year}", end="")
 #             for i,p in enumerate(planetes):
-#                 x, y, z = p.get_pos(year, m+1, j, 12)
+#                 x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
 #                 X[i].append(x)
 #                 Y[i].append(y)
 #                 Z[i].append(z)
 # print()
 
+x, y, z = terre.get_pos(2025, 2, 3, 17, 20)
+decl, asc = zenith_direction(46,5, 4.9, 2025, 2, 3, 17, 20)
+
+
 # for i, p in enumerate(planetes):
 #     nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
 #     ax.plot(X[i][-nbPts:], Y[i][-nbPts:], Z[i][-nbPts:])
-#     # for k in range(nbPts-1):
-#     #     ax.plot([X[i][-2-k], X[i][-1-k]], [Y[i][-2-k], Y[i][-1-k]], [Z[i][-2-k], Z[i][-1-k]], color=f"C{i}", alpha=1-k/nbPts, label=f"{p.name}")
+    # for k in range(nbPts-1):
+    #     ax.plot([X[i][-2-k], X[i][-1-k]], [Y[i][-2-k], Y[i][-1-k]], [Z[i][-2-k], Z[i][-1-k]], color=f"C{i}", alpha=1-k/nbPts, label=f"{p.name}")
 # ax.plot(0, 0, 0, marker='o', markersize=12)
 # ax.set_xlabel("X")
 # ax.set_ylabel("Y")
 # ax.set_zlabel("Z")
 # ax.set_title(f"Year: {year}, Month: {m+1}, Day: {j}")
 # ax.view_init(elev=54, azim=-93, roll=0)
-# ax.legend()
+# # ax.legend()
 # plt.show()
 
 # t = np.linspace(0, 2*np.pi, 100)
@@ -130,61 +161,61 @@ ax = fig.add_subplot(111, projection='3d')
 # ax.plot(c, s, z, 'black')
 
 # consts = [velorum]
-consts = constellations
-greek_letters = [
-    "alpha",
-    "beta",
-    "gamma",
-    "delta",
-    "epsilon",
-    "zeta",
-    "eta",
-    "theta",
-    "iota",
-    "kappa",
-    "lambda",
-    "mu",
-    "nu",
-    "xi",
-    "omicron",
-    "pi",
-    "rho",
-    "sigma",
-    "tau",
-    "upsilon",
-    "phi",
-    "chi",
-    "psi",
-    "omega",
-]
-for i, c in enumerate(consts):
-    if len(consts) == 1:
-        for s in c.stars:
-            x, y, z = s.get_pos()
-            if s.magn_app < 6: # and z > 1/np.sqrt(2):
-                ax.plot(x, y, z, 'o', color=f"C{2 * i}", markersize=2)
-                ax.text(x, y, z, s.name)
+# consts = constellations
+# greek_letters = [
+#     "alpha",
+#     "beta",
+#     "gamma",
+#     "delta",
+#     "epsilon",
+#     "zeta",
+#     "eta",
+#     "theta",
+#     "iota",
+#     "kappa",
+#     "lambda",
+#     "mu",
+#     "nu",
+#     "xi",
+#     "omicron",
+#     "pi",
+#     "rho",
+#     "sigma",
+#     "tau",
+#     "upsilon",
+#     "phi",
+#     "chi",
+#     "psi",
+#     "omega",
+# ]
+# for i, c in enumerate(consts):
+#     if len(consts) == 1:
+#         for s in c.stars:
+#             x, y, z = s.get_pos()
+#             if s.magn_app < 6: # and z > 1/np.sqrt(2):
+#                 ax.plot(x, y, z, 'o', color=f"C{2 * i}", markersize=2)
+#                 ax.text(x, y, z, s.name)
 
-    d = {}
-    for l in c.lines:
-        s1, s2 = l
-        d[s1.name] = s1
-        d[s2.name] = s2
+#     d = {}
+#     for l in c.lines:
+#         s1, s2 = l
+#         d[s1.name] = s1
+#         d[s2.name] = s2
 
-    for n in d:
-        s = d[n]
-        x, y, z = s.get_pos()
-        ax.plot(x, y, z, 'o', color=f"C{2 * i}", markersize=2)
+#     for n in d:
+#         s = d[n]
+#         x, y, z = s.get_pos()
+#         ax.plot(x, y, z, 'o', color=f"C{2 * i}", markersize=2)
 
 
-    for l in c.lines:
-        s1, s2 = l[0], l[1]
-        x1, y1, z1 = s1.get_pos()
-        x2, y2, z2 = s2.get_pos()
-        p = 0.9
-        ax.plot([p*x1+(1-p)*x2, (1-p)*x1+p*x2], [p*y1+(1-p)*y2, (1-p)*y1+p*y2], [p*z1+(1-p)*z2, (1-p)*z1+p*z2], color=f"C{2 * i + 1}")
+#     for l in c.lines:
+#         s1, s2 = l[0], l[1]
+#         x1, y1, z1 = s1.get_pos()
+#         x2, y2, z2 = s2.get_pos()
+#         p = 0.9
+#         ax.plot([p*x1+(1-p)*x2, (1-p)*x1+p*x2], [p*y1+(1-p)*y2, (1-p)*y1+p*y2], [p*z1+(1-p)*z2, (1-p)*z1+p*z2], color=f"C{2 * i + 1}")
 
-ax.view_init(elev=-30, azim=-45, roll=0)
-ax.axis('equal')
+# ax.view_init(elev=-30, azim=-45, roll=0)
+# ax.axis('equal')
 
-plt.show()
+# plt.show()
