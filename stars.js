@@ -26,7 +26,7 @@ class Star {
         const x = Math.cos(deg2rad(this.alpha)) * Math.cos(deg2rad(this.decl));
         const y = Math.sin(deg2rad(this.alpha)) * Math.cos(deg2rad(this.decl));
         const z = Math.sin(deg2rad(this.decl));
-        return [x, y, z];
+        return [x, z, -y];
     }
 }
 
