@@ -260,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const long = 0;
     const lat = 0;
-    const up = [1, 0, 0];
+    const up = [0, 1, 0];
 
     // INIT ENV
     gl.clearColor(0.0, 0.0, 0.0, 1.0);

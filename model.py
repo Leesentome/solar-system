@@ -1,4 +1,5 @@
 
+import time
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -102,41 +103,137 @@ def julianDay(year, month, day):
     return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + B - 1524.5
 
 def sideralTimeGreewich(julianday):
-    T = (julianday - 2451545.0) / 36525,
+    T = (julianday - 2451545.0) / 36525
     temp  = (280.46061837 + 360.98564736629 * (julianday - 2451545) + 0.000387933 * T * T - (T * T * T) / 38710000) % 360
     return temp
 
-def localSideralTime(longitude, year, month, day, hour, minute, second):
+def localSideralTime(longitude, year, month, day, hour, minute, second, gmt):
+    dayShift, hour = divmod(hour - gmt, 24)
+    day += dayShift
+    if not(0 < day <= mois[month - 1]):
+        monthShift, day = divmod(day - 1, mois[month - 1])
+        day += 1
+        month += monthShift
+        if not(0 < month <= 12):
+            yearShift, month = divmod(month - 1, 12)
+            month += 1
+            year += yearShift
     D = day + hour / 24 + minute / 1440 + second / 86400
     return sideralTimeGreewich(julianDay(year, month, D)) + longitude
 
-def zenith_direction(latitude, longitude, year, month, day, hour, minute, second):
-    lst = localSideralTime(longitude, year, month, day, hour, minute, second)
+def zenith_direction(latitude, longitude, year, month, day, hour, minute, second, gmt):
+    lst = localSideralTime(longitude, year, month, day, hour, minute, second, gmt)
     return lst, latitude
+
+UA = 149597870700
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-# X = [[] for p in planetes]
-# Y = [[] for p in planetes]
-# Z = [[] for p in planetes]
+X = [[] for p in planetes]
+Y = [[] for p in planetes]
+Z = [[] for p in planetes]
 
-# for year in range(1900, 2050):
-#     for m, lenm in enumerate(mois):
-#         if (year%4 == 0) and (m == 2):
-#             lenm += 1
-#         for j in range(1, lenm + 1):
-#             print(f"\r{j:02}/{m+1:02}/{year}", end="")
-#             for i,p in enumerate(planetes):
-#                 x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
-#                 X[i].append(x)
-#                 Y[i].append(y)
-#                 Z[i].append(z)
+for year in range(1900, 2050):
+    for m, lenm in enumerate(mois):
+        if (year%4 == 0) and (m == 2):
+            lenm += 1
+        for j in range(1, lenm + 1):
+            # print(f"\r{j:02}/{m+1:02}/{year}", end="")
+            # for i,p in enumerate(planetes):
+            for i,p in enumerate([terre]):
+                x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
+                X[i].append(x)
+                Y[i].append(y)
+                Z[i].append(z)
 # print()
 
-x, y, z = terre.get_pos(2025, 2, 3, 17, 20)
-decl, asc = zenith_direction(46,5, 4.9, 2025, 2, 3, 17, 20)
+lat = 46.5
+lon = 4.9
+year = 2025
+month = 2
+day = 3
+hour = 12
+minu = 0
+sec = 0
+# while True:
+vDir = []
+for i in range(2):
+    # t = time.time()
+    # t_struct = time.localtime(t)
 
+    # year = t_struct.tm_year
+    # month = t_struct.tm_mon
+    # day = t_struct.tm_mday
+    # hour = t_struct.tm_hour
+    # minu = t_struct.tm_min
+    # sec = t_struct.tm_sec
+
+    # minu += 1
+    # if minu >= 60:
+    #     minu = 0
+    #     hour += 1
+    #     if hour >= 24:
+    #         hour = 0
+    #         day += 1
+    #         if day > mois[month - 1]:
+    #             day = 1
+    #             month += 1
+    #             if month > 12:
+    #                 month = 1
+    #                 year += 1
+
+    month += 3
+
+    x, y, z = terre.get_pos(year, month, day, hour, minu, sec)
+    asc, decl = zenith_direction(lat, lon, year, month, day, hour, minu, sec, 1)
+    plt.plot([0, x], [0, y], [0, z])
+
+    vDir.append([x, y, z])
+
+    r = 0.01
+
+    # u = np.linspace(0, 2 * np.pi, 30)
+    # v = np.linspace(0, np.pi, 15)
+    # X = r * np.outer(np.cos(u), np.sin(v)) + x
+    # Y = r * np.outer(np.sin(u), np.sin(v)) + y
+    # Z = r * np.outer(np.ones(np.size(u)), np.cos(v)) + z
+
+    # dx = 2 * r * np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+    # dy = 2 * r * np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+    # dz = 2 * r * np.sin(np.deg2rad(decl))
+
+    # sunDir = -np.array([x, y, z])
+    # up = np.array([dx, dy, dz])
+    # isDay = np.dot(sunDir, up) > 0
+    # pr = "Day  " if isDay else "Night"
+    
+    # print(f"\r{hour:02}:{minu:02}:{sec:02}, {day:02}/{month:02}/{year} -> {pr}", end="")
+
+    # ax.cla()
+    # ax.plot([0], [0], [0], 'o', color="yellow")
+    # ax.plot([x], [y], [z], 'o', color="blue")
+
+    # ax.plot_surface(X, Y, Z, color='b', alpha=0.6)
+
+    # ax.plot([x, x+dx], [y, y+dy], [z, z+dz], color='black')
+    # ax.plot([x, x], [y, y], [z, z+2*r], color='black')
+    # ax.axis("equal")
+    # plt.pause(0.1)
+# plt.plot()
+
+v1 = np.array(vDir[0])
+v2 = np.array(vDir[1])
+upDir = np.cross(v1, v2)
+upDir = upDir / np.linalg.norm(upDir)
+
+print(np.rad2deg(np.acos(np.dot(upDir, [0, 1, 0]))))
+
+plt.plot(X[0], Y[0], Z[0])
+plt.plot([0, upDir[0]], [0, upDir[1]], [0, upDir[2]])
+plt.plot([0, 0], [0, 1], [0, 0])
+plt.axis("equal")
+plt.show()
 
 # for i, p in enumerate(planetes):
 #     nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
