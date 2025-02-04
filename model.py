@@ -62,7 +62,7 @@ class Planet:
             DE = DM / (1 - e * np.cos(np.deg2rad(E)))
 
         xprime = a * (np.cos(np.deg2rad(E)) - e)
-        yprime = a * np.sqrt(1 - e * e)* np.sin(np.deg2rad(E))
+        yprime = a * np.sqrt(1 - e * e) * np.sin(np.deg2rad(E))
         zprime = 0
 
         xecl = (np.cos(np.deg2rad(omega)) * np.cos(np.deg2rad(Om)) - np.sin(np.deg2rad(omega)) * np.sin(np.deg2rad(Om)) * np.cos(np.deg2rad(I))) * xprime + (-np.sin(np.deg2rad(omega)) * np.cos(np.deg2rad(Om)) - np.cos(np.deg2rad(omega)) * np.sin(np.deg2rad(Om)) * np.cos(np.deg2rad(I))) * yprime
@@ -71,8 +71,8 @@ class Planet:
 
         epsilon = 23.43928
         xeq = xecl
-        yeq = np.cos(epsilon) * yecl - np.sin(epsilon) * zecl
-        zeq = np.sin(epsilon) * yecl + np.cos(epsilon) * zecl
+        yeq = np.cos(np.deg2rad(epsilon)) * yecl - np.sin(np.deg2rad(epsilon)) * zecl
+        zeq = np.sin(np.deg2rad(epsilon)) * yecl + np.cos(np.deg2rad(epsilon)) * zecl
 
         return xeq, yeq, zeq
 
@@ -85,7 +85,8 @@ saturne = Planet("Saturne", 10759, 9.53667594, -0.00125060, 0.05386179, -0.00050
 uranus = Planet("Uranus", 30685, 19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589)
 neptune = Planet("Neptune", 60226, 30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664)
 
-planetes = [mercure, venus, terre, mars, jupiter, saturne, uranus, neptune]
+# planetes = [mercure, venus, terre, mars, jupiter, saturne, uranus, neptune]
+planetes = [terre]
 
 def julianDay(year, month, day):
     if month <= 2:
@@ -102,7 +103,7 @@ def julianDay(year, month, day):
     return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + B - 1524.5
 
 def sideralTimeGreewich(julianday):
-    T = (julianday - 2451545.0) / 36525,
+    T = (julianday - 2451545.0) / 36525
     temp  = (280.46061837 + 360.98564736629 * (julianday - 2451545) + 0.000387933 * T * T - (T * T * T) / 38710000) % 360
     return temp
 
@@ -117,40 +118,54 @@ def zenith_direction(latitude, longitude, year, month, day, hour, minute, second
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-# X = [[] for p in planetes]
-# Y = [[] for p in planetes]
-# Z = [[] for p in planetes]
+X = [[] for p in planetes]
+Y = [[] for p in planetes]
+Z = [[] for p in planetes]
 
-# for year in range(1900, 2050):
-#     for m, lenm in enumerate(mois):
-#         if (year%4 == 0) and (m == 2):
-#             lenm += 1
-#         for j in range(1, lenm + 1):
-#             print(f"\r{j:02}/{m+1:02}/{year}", end="")
-#             for i,p in enumerate(planetes):
-#                 x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
-#                 X[i].append(x)
-#                 Y[i].append(y)
-#                 Z[i].append(z)
-# print()
+for year in range(1900, 2051):
+    for m, lenm in enumerate(mois):
+        if (year%4 == 0) and (m == 2):
+            lenm += 1
+        for j in range(1, lenm + 1):
+            print(f"\r{j:02}/{m+1:02}/{year}", end="")
+            for i,p in enumerate(planetes):
+                x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
+                X[i].append(x)
+                Y[i].append(y)
+                Z[i].append(z)
+print()
 
-x, y, z = terre.get_pos(2025, 2, 3, 17, 20)
-decl, asc = zenith_direction(46,5, 4.9, 2025, 2, 3, 17, 20)
+x1, y1, z1 = terre.get_pos(2025, 2, 3, 17, 20, 0)
+x2, y2, z2 = terre.get_pos(2025, 5, 3, 17, 20, 0)
+decl, asc = zenith_direction(46.5, 4.9, 2025, 2, 3, 17, 20, 0)
+x = np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+y = np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+z = np.sin(np.deg2rad(decl))
 
+rotUp = np.cross([x1, y1, z1], [x2, y2, z2])
 
-# for i, p in enumerate(planetes):
-#     nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
-#     ax.plot(X[i][-nbPts:], Y[i][-nbPts:], Z[i][-nbPts:])
+ax.plot([0, 0], [0, 0], [0, 1], color='black')
+ax.plot([x1, x1+x], [y1, y1+y], [z1, z1+z], color='green')
+ax.plot([0, x1], [0, y1], [0, z1], color="C2")
+ax.plot([0, x2], [0, y2], [0, z2], color="C3")
+ax.plot([0, rotUp[0]], [0, rotUp[1]], [0, rotUp[2]], color="C4")
+print(np.rad2deg(np.acos(rotUp[2] / np.dot(rotUp, rotUp))))
+
+for i, p in enumerate(planetes):
+    # nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
+    # ax.plot(X[i][-nbPts:], Y[i][-nbPts:], Z[i][-nbPts:])
+    ax.plot(X[i], Y[i], Z[i])
     # for k in range(nbPts-1):
     #     ax.plot([X[i][-2-k], X[i][-1-k]], [Y[i][-2-k], Y[i][-1-k]], [Z[i][-2-k], Z[i][-1-k]], color=f"C{i}", alpha=1-k/nbPts, label=f"{p.name}")
-# ax.plot(0, 0, 0, marker='o', markersize=12)
-# ax.set_xlabel("X")
-# ax.set_ylabel("Y")
-# ax.set_zlabel("Z")
-# ax.set_title(f"Year: {year}, Month: {m+1}, Day: {j}")
-# ax.view_init(elev=54, azim=-93, roll=0)
-# # ax.legend()
-# plt.show()
+ax.plot(0, 0, 0, marker='o', markersize=12)
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+ax.set_title(f"Year: {year}, Month: {m+1}, Day: {j}")
+ax.view_init(elev=54, azim=-93, roll=0)
+ax.axis("equal")
+# ax.legend()
+plt.show()
 
 # t = np.linspace(0, 2*np.pi, 100)
 # z = np.zeros(t.shape)
