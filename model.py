@@ -174,9 +174,10 @@ aurora = 0
 nightfall = 0
 wasDay = False
 for h in range(1, 24):
-    for m in range(60):
+    for m in range(0, 60, 1):
+        print(f"\r{h+1:02}:{m:02}:{0:02}, {day:02}/{month:02}/{year}", end="")
         x, y, z = terre.get_pos(year, month, day, h, m, 0)
-        decl, asc = zenith_direction(46.5, 4.9, year, month, day, h, m, 0)
+        asc, decl = zenith_direction(46.5, 4.9, year, month, day, h, m, 0)
         dx = np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
         dy = np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
         dz = np.sin(np.deg2rad(decl))
@@ -195,6 +196,7 @@ for h in range(1, 24):
         ax.plot([x, x], [y, y], [z-0.1, z+0.1])
         ax.plot(0, 0, 0, marker='o', markersize=12)
         plt.pause(0.1)
+print()
 print(aurora, nightfall)
 
 
