@@ -118,54 +118,85 @@ def zenith_direction(latitude, longitude, year, month, day, hour, minute, second
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-X = [[] for p in planetes]
-Y = [[] for p in planetes]
-Z = [[] for p in planetes]
+# X = [[] for p in planetes]
+# Y = [[] for p in planetes]
+# Z = [[] for p in planetes]
 
-for year in range(1900, 2051):
-    for m, lenm in enumerate(mois):
-        if (year%4 == 0) and (m == 2):
-            lenm += 1
-        for j in range(1, lenm + 1):
-            print(f"\r{j:02}/{m+1:02}/{year}", end="")
-            for i,p in enumerate(planetes):
-                x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
-                X[i].append(x)
-                Y[i].append(y)
-                Z[i].append(z)
-print()
+# for year in range(1900, 2051):
+#     for m, lenm in enumerate(mois):
+#         if (year%4 == 0) and (m == 2):
+#             lenm += 1
+#         for j in range(1, lenm + 1):
+#             print(f"\r{j:02}/{m+1:02}/{year}", end="")
+#             for i,p in enumerate(planetes):
+#                 x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
+#                 X[i].append(x)
+#                 Y[i].append(y)
+#                 Z[i].append(z)
+# print()
 
-x1, y1, z1 = terre.get_pos(2025, 2, 3, 17, 20, 0)
-x2, y2, z2 = terre.get_pos(2025, 5, 3, 17, 20, 0)
-decl, asc = zenith_direction(46.5, 4.9, 2025, 2, 3, 17, 20, 0)
-x = np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
-y = np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
-z = np.sin(np.deg2rad(decl))
+# x1, y1, z1 = terre.get_pos(2025, 2, 3, 17, 20, 0)
+# x2, y2, z2 = terre.get_pos(2025, 5, 3, 17, 20, 0)
+# decl, asc = zenith_direction(46.5, 4.9, 2025, 2, 3, 17, 20, 0)
+# x = np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+# y = np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+# z = np.sin(np.deg2rad(decl))
 
-rotUp = np.cross([x1, y1, z1], [x2, y2, z2])
+# rotUp = np.cross([x1, y1, z1], [x2, y2, z2])
 
-ax.plot([0, 0], [0, 0], [0, 1], color='black')
-ax.plot([x1, x1+x], [y1, y1+y], [z1, z1+z], color='green')
-ax.plot([0, x1], [0, y1], [0, z1], color="C2")
-ax.plot([0, x2], [0, y2], [0, z2], color="C3")
-ax.plot([0, rotUp[0]], [0, rotUp[1]], [0, rotUp[2]], color="C4")
-print(np.rad2deg(np.acos(rotUp[2] / np.dot(rotUp, rotUp))))
+# ax.plot([0, 0], [0, 0], [0, 1], color='black')
+# ax.plot([x1, x1+x], [y1, y1+y], [z1, z1+z], color='green')
+# ax.plot([0, x1], [0, y1], [0, z1], color="C2")
+# ax.plot([0, x2], [0, y2], [0, z2], color="C3")
+# ax.plot([0, rotUp[0]], [0, rotUp[1]], [0, rotUp[2]], color="C4")
+# print(np.rad2deg(np.acos(rotUp[2] / np.dot(rotUp, rotUp))))
 
-for i, p in enumerate(planetes):
-    # nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
-    # ax.plot(X[i][-nbPts:], Y[i][-nbPts:], Z[i][-nbPts:])
-    ax.plot(X[i], Y[i], Z[i])
-    # for k in range(nbPts-1):
-    #     ax.plot([X[i][-2-k], X[i][-1-k]], [Y[i][-2-k], Y[i][-1-k]], [Z[i][-2-k], Z[i][-1-k]], color=f"C{i}", alpha=1-k/nbPts, label=f"{p.name}")
-ax.plot(0, 0, 0, marker='o', markersize=12)
-ax.set_xlabel("X")
-ax.set_ylabel("Y")
-ax.set_zlabel("Z")
-ax.set_title(f"Year: {year}, Month: {m+1}, Day: {j}")
-ax.view_init(elev=54, azim=-93, roll=0)
-ax.axis("equal")
-# ax.legend()
-plt.show()
+# for i, p in enumerate(planetes):
+#     # nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
+#     # ax.plot(X[i][-nbPts:], Y[i][-nbPts:], Z[i][-nbPts:])
+#     ax.plot(X[i], Y[i], Z[i])
+#     # for k in range(nbPts-1):
+#     #     ax.plot([X[i][-2-k], X[i][-1-k]], [Y[i][-2-k], Y[i][-1-k]], [Z[i][-2-k], Z[i][-1-k]], color=f"C{i}", alpha=1-k/nbPts, label=f"{p.name}")
+# ax.plot(0, 0, 0, marker='o', markersize=12)
+# ax.set_xlabel("X")
+# ax.set_ylabel("Y")
+# ax.set_zlabel("Z")
+# ax.set_title(f"Year: {year}, Month: {m+1}, Day: {j}")
+# ax.view_init(elev=54, azim=-93, roll=0)
+# ax.axis("equal")
+# # ax.legend()
+# plt.show()
+
+year = 2025
+month = 2
+day = 4
+aurora = 0
+nightfall = 0
+wasDay = False
+for h in range(1, 24):
+    for m in range(60):
+        x, y, z = terre.get_pos(year, month, day, h, m, 0)
+        decl, asc = zenith_direction(46.5, 4.9, year, month, day, h, m, 0)
+        dx = np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+        dy = np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+        dz = np.sin(np.deg2rad(decl))
+
+        sDir = -np.array([x, y, z])
+        zDir = np.array([dx, dy, dz])
+        isDay = np.dot(sDir, zDir) > 0
+        if not(wasDay) and isDay:
+            aurora = (h+1, m)
+        if wasDay and not(isDay):
+            nightfall = (h+1, m)
+        wasDay = isDay
+
+        ax.cla()
+        ax.plot([x, x+.1*dx], [y, y+.1*dy], [z, z+.1*dz])
+        ax.plot([x, x], [y, y], [z-0.1, z+0.1])
+        ax.plot(0, 0, 0, marker='o', markersize=12)
+        plt.pause(0.1)
+print(aurora, nightfall)
+
 
 # t = np.linspace(0, 2*np.pi, 100)
 # z = np.zeros(t.shape)

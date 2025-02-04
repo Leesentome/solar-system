@@ -77,4 +77,4 @@ saturne = new Planet("Saturne", 10759, 9.53667594, -0.00125060, 0.05386179, -0.0
 uranus = new Planet("Uranus", 30685, 19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589);
 neptune = new Planet("Neptune", 60226, 30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664);
 
-planetes = [mercure, venus, terre, mars, jupiter, saturne, uranus, neptune];
+planets = [mercure, venus, terre, mars, jupiter, saturne, uranus, neptune];

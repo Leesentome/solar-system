@@ -109,6 +109,54 @@ class AllStar {
     }
 }
 
+class AllPlanet {
+    // constructor(gl, shaderProgram, planets, ref) {
+    //     this.gl = gl;
+    //     this.shaderProgram = shaderProgram;
+
+    //     this.shaderProgram.use();
+
+    //     this.planets = planets
+    //     this.ref = ref
+
+        // this.vertices = new Float32Array(
+        //     planets.flatMap(planets => planets.get_pos() - ref.getpos())
+        // )
+
+        // this.magnitudes = new Float32Array(
+        //     planets.map(planets => planets.magn_app)
+        // )
+
+        // this.vertexBuffer = this.gl.createBuffer();
+        // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
+        // this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
+
+        // this.positionAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_position")
+
+        // this.magnitudeBuffer = this.gl.createBuffer();
+        // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.magnitudeBuffer);
+        // this.gl.bufferData(this.gl.ARRAY_BUFFER, this.magnitudes, this.gl.STATIC_DRAW);
+
+        // this.magnitudeAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_magnitude");
+
+    // }
+
+    // draw() {
+    //     this.shaderProgram.use();
+
+    //     // Bind position buffer
+    //     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
+    //     this.gl.vertexAttribPointer(this.positionAttributeLocation, 3, this.gl.FLOAT, false, 0, 0);
+    //     this.gl.enableVertexAttribArray(this.positionAttributeLocation);
+
+    //     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.magnitudeBuffer);
+    //     this.gl.vertexAttribPointer(this.magnitudeAttributeLocation, 1, this.gl.FLOAT, false, 0, 0);
+    //     this.gl.enableVertexAttribArray(this.magnitudeAttributeLocation);
+
+    //     this.gl.drawArrays(this.gl.POINTS, 0, this.stars.length);
+    // }
+}
+
 class ConstellationDraw {
     constructor(gl, shaderProgram, constellation) {
         this.gl = gl;
