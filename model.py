@@ -63,7 +63,7 @@ class Planet:
             DE = DM / (1 - e * np.cos(np.deg2rad(E)))
 
         xprime = a * (np.cos(np.deg2rad(E)) - e)
-        yprime = a * np.sqrt(1 - e * e)* np.sin(np.deg2rad(E))
+        yprime = a * np.sqrt(1 - e * e) * np.sin(np.deg2rad(E))
         zprime = 0
 
         xecl = (np.cos(np.deg2rad(omega)) * np.cos(np.deg2rad(Om)) - np.sin(np.deg2rad(omega)) * np.sin(np.deg2rad(Om)) * np.cos(np.deg2rad(I))) * xprime + (-np.sin(np.deg2rad(omega)) * np.cos(np.deg2rad(Om)) - np.cos(np.deg2rad(omega)) * np.sin(np.deg2rad(Om)) * np.cos(np.deg2rad(I))) * yprime
@@ -72,8 +72,8 @@ class Planet:
 
         epsilon = 23.43928
         xeq = xecl
-        yeq = np.cos(epsilon) * yecl - np.sin(epsilon) * zecl
-        zeq = np.sin(epsilon) * yecl + np.cos(epsilon) * zecl
+        yeq = np.cos(np.deg2rad(epsilon)) * yecl - np.sin(np.deg2rad(epsilon)) * zecl
+        zeq = np.sin(np.deg2rad(epsilon)) * yecl + np.cos(np.deg2rad(epsilon)) * zecl
 
         return xeq, yeq, zeq
 
@@ -86,7 +86,8 @@ saturne = Planet("Saturne", 10759, 9.53667594, -0.00125060, 0.05386179, -0.00050
 uranus = Planet("Uranus", 30685, 19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589)
 neptune = Planet("Neptune", 60226, 30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664)
 
-planetes = [mercure, venus, terre, mars, jupiter, saturne, uranus, neptune]
+# planetes = [mercure, venus, terre, mars, jupiter, saturne, uranus, neptune]
+planetes = [terre]
 
 def julianDay(year, month, day):
     if month <= 2:
@@ -107,22 +108,12 @@ def sideralTimeGreewich(julianday):
     temp  = (280.46061837 + 360.98564736629 * (julianday - 2451545) + 0.000387933 * T * T - (T * T * T) / 38710000) % 360
     return temp
 
-def localSideralTime(longitude, year, month, day, hour, minute, second, gmt):
-    dayShift, hour = divmod(hour - gmt, 24)
-    day += dayShift
-    if not(0 < day <= mois[month - 1]):
-        monthShift, day = divmod(day - 1, mois[month - 1])
-        day += 1
-        month += monthShift
-        if not(0 < month <= 12):
-            yearShift, month = divmod(month - 1, 12)
-            month += 1
-            year += yearShift
+def localSideralTime(longitude, year, month, day, hour, minute, second):
     D = day + hour / 24 + minute / 1440 + second / 86400
     return sideralTimeGreewich(julianDay(year, month, D)) + longitude
 
-def zenith_direction(latitude, longitude, year, month, day, hour, minute, second, gmt):
-    lst = localSideralTime(longitude, year, month, day, hour, minute, second, gmt)
+def zenith_direction(latitude, longitude, year, month, day, hour, minute, second):
+    lst = localSideralTime(longitude, year, month, day, hour, minute, second)
     return lst, latitude
 
 UA = 149597870700
@@ -134,18 +125,17 @@ X = [[] for p in planetes]
 Y = [[] for p in planetes]
 Z = [[] for p in planetes]
 
-for year in range(1900, 2050):
-    for m, lenm in enumerate(mois):
-        if (year%4 == 0) and (m == 2):
-            lenm += 1
-        for j in range(1, lenm + 1):
-            # print(f"\r{j:02}/{m+1:02}/{year}", end="")
-            # for i,p in enumerate(planetes):
-            for i,p in enumerate([terre]):
-                x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
-                X[i].append(x)
-                Y[i].append(y)
-                Z[i].append(z)
+# for year in range(1900, 2051):
+#     for m, lenm in enumerate(mois):
+#         if (year%4 == 0) and (m == 2):
+#             lenm += 1
+#         for j in range(1, lenm + 1):
+#             print(f"\r{j:02}/{m+1:02}/{year}", end="")
+#             for i,p in enumerate(planetes):
+#                 x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
+#                 X[i].append(x)
+#                 Y[i].append(y)
+#                 Z[i].append(z)
 # print()
 
 lat = 46.5
@@ -186,7 +176,7 @@ for i in range(2):
     month += 3
 
     x, y, z = terre.get_pos(year, month, day, hour, minu, sec)
-    asc, decl = zenith_direction(lat, lon, year, month, day, hour, minu, sec, 1)
+    asc, decl = zenith_direction(lat, lon, year, month, day, hour, minu, sec)
     plt.plot([0, x], [0, y], [0, z])
 
     vDir.append([x, y, z])
@@ -236,18 +226,53 @@ plt.axis("equal")
 plt.show()
 
 # for i, p in enumerate(planetes):
-#     nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
-#     ax.plot(X[i][-nbPts:], Y[i][-nbPts:], Z[i][-nbPts:])
-    # for k in range(nbPts-1):
-    #     ax.plot([X[i][-2-k], X[i][-1-k]], [Y[i][-2-k], Y[i][-1-k]], [Z[i][-2-k], Z[i][-1-k]], color=f"C{i}", alpha=1-k/nbPts, label=f"{p.name}")
+#     # nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
+#     # ax.plot(X[i][-nbPts:], Y[i][-nbPts:], Z[i][-nbPts:])
+#     ax.plot(X[i], Y[i], Z[i])
+#     # for k in range(nbPts-1):
+#     #     ax.plot([X[i][-2-k], X[i][-1-k]], [Y[i][-2-k], Y[i][-1-k]], [Z[i][-2-k], Z[i][-1-k]], color=f"C{i}", alpha=1-k/nbPts, label=f"{p.name}")
 # ax.plot(0, 0, 0, marker='o', markersize=12)
 # ax.set_xlabel("X")
 # ax.set_ylabel("Y")
 # ax.set_zlabel("Z")
 # ax.set_title(f"Year: {year}, Month: {m+1}, Day: {j}")
 # ax.view_init(elev=54, azim=-93, roll=0)
+# ax.axis("equal")
 # # ax.legend()
 # plt.show()
+
+year = 2025
+month = 2
+day = 4
+aurora = 0
+nightfall = 0
+wasDay = False
+for h in range(1, 24):
+    for m in range(0, 60, 1):
+        print(f"\r{h+1:02}:{m:02}:{0:02}, {day:02}/{month:02}/{year}", end="")
+        x, y, z = terre.get_pos(year, month, day, h, m, 0)
+        asc, decl = zenith_direction(46.5, 4.9, year, month, day, h, m, 0)
+        dx = np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+        dy = np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+        dz = np.sin(np.deg2rad(decl))
+
+        sDir = -np.array([x, y, z])
+        zDir = np.array([dx, dy, dz])
+        isDay = np.dot(sDir, zDir) > 0
+        if not(wasDay) and isDay:
+            aurora = (h+1, m)
+        if wasDay and not(isDay):
+            nightfall = (h+1, m)
+        wasDay = isDay
+
+        ax.cla()
+        ax.plot([x, x+.1*dx], [y, y+.1*dy], [z, z+.1*dz])
+        ax.plot([x, x], [y, y], [z-0.1, z+0.1])
+        ax.plot(0, 0, 0, marker='o', markersize=12)
+        plt.pause(0.1)
+print()
+print(aurora, nightfall)
+
 
 # t = np.linspace(0, 2*np.pi, 100)
 # z = np.zeros(t.shape)
