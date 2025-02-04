@@ -37,33 +37,33 @@ class Planet {
         const Om = this.Om0 + this.Omp * T;
 
         const omega = om - Om;
-        var M = L - om + this.b * T * T + this.c * np.cos(this.f * T) + this.s * np.sin(this.f * T);
+        var M = L - om + this.b * T * T + this.c * Math.cos(this.f * T) + this.s * Math.sin(this.f * T);
         var M = ((M + 180) % 360) - 180;
 
-        const estar = 180/np.pi * e;
+        const estar = 180/Math.pi * e;
 
-        var E = M + estar * np.sin(np.deg2rad(M));
-        var DM = M - (E - estar * np.sin(np.deg2rad(E)));
-        var DE = DM / (1 - e * np.cos(np.deg2rad(E)));
+        var E = M + estar * Math.sin(deg2rad(M));
+        var DM = M - (E - estar * Math.sin(deg2rad(E)));
+        var DE = DM / (1 - e * Math.cos(deg2rad(E)));
 
-        while (np.abs(DE) > 10**-6) {
+        while (Math.abs(DE) > 10**-6) {
             E += DE;
-            DM = M - (E - estar * np.sin(np.deg2rad(E)));
-            DE = DM / (1 - e * np.cos(np.deg2rad(E)));
+            DM = M - (E - estar * Math.sin(deg2rad(E)));
+            DE = DM / (1 - e * Math.cos(deg2rad(E)));
         }
 
-        const xprime = a * (np.cos(np.deg2rad(E)) - e);
-        const yprime = a * np.sqrt(1 - e * e)* np.sin(np.deg2rad(E));
+        const xprime = a * (Math.cos(deg2rad(E)) - e);
+        const yprime = a * Math.sqrt(1 - e * e)* Math.sin(deg2rad(E));
         const zprime = 0;
 
-        const xecl = (np.cos(np.deg2rad(omega)) * np.cos(np.deg2rad(Om)) - np.sin(np.deg2rad(omega)) * np.sin(np.deg2rad(Om)) * np.cos(np.deg2rad(I))) * xprime + (-np.sin(np.deg2rad(omega)) * np.cos(np.deg2rad(Om)) - np.cos(np.deg2rad(omega)) * np.sin(np.deg2rad(Om)) * np.cos(np.deg2rad(I))) * yprime;
-        const yecl = (np.cos(np.deg2rad(omega)) * np.sin(np.deg2rad(Om)) + np.sin(np.deg2rad(omega)) * np.cos(np.deg2rad(Om)) * np.cos(np.deg2rad(I))) * xprime + (-np.sin(np.deg2rad(omega)) * np.sin(np.deg2rad(Om)) + np.cos(np.deg2rad(omega)) * np.cos(np.deg2rad(Om)) * np.cos(np.deg2rad(I))) * yprime;
-        const zecl = np.sin(np.deg2rad(omega)) * np.sin(np.deg2rad(I)) * xprime + np.cos(np.deg2rad(omega)) * np.sin(np.deg2rad(I)) * yprime;
+        const xecl = (Math.cos(deg2rad(omega)) * Math.cos(deg2rad(Om)) - Math.sin(deg2rad(omega)) * Math.sin(deg2rad(Om)) * Math.cos(deg2rad(I))) * xprime + (-Math.sin(deg2rad(omega)) * Math.cos(deg2rad(Om)) - Math.cos(deg2rad(omega)) * Math.sin(deg2rad(Om)) * Math.cos(deg2rad(I))) * yprime;
+        const yecl = (Math.cos(deg2rad(omega)) * Math.sin(deg2rad(Om)) + Math.sin(deg2rad(omega)) * Math.cos(deg2rad(Om)) * Math.cos(deg2rad(I))) * xprime + (-Math.sin(deg2rad(omega)) * Math.sin(deg2rad(Om)) + Math.cos(deg2rad(omega)) * Math.cos(deg2rad(Om)) * Math.cos(deg2rad(I))) * yprime;
+        const zecl = Math.sin(deg2rad(omega)) * Math.sin(deg2rad(I)) * xprime + Math.cos(deg2rad(omega)) * Math.sin(deg2rad(I)) * yprime;
 
         const epsilon = 23.43928;
         const xeq = xecl;
-        const yeq = np.cos(epsilon) * yecl - np.sin(epsilon) * zecl;
-        const zeq = np.sin(epsilon) * yecl + np.cos(epsilon) * zecl;
+        const yeq = Math.cos(deg2rad(epsilon)) * yecl - Math.sin(deg2rad(epsilon)) * zecl;
+        const zeq = Math.sin(deg2rad(epsilon)) * yecl + Math.cos(deg2rad(epsilon)) * zecl;
 
         return xeq, yeq, zeq;
     }
