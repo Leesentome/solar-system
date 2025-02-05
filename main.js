@@ -606,7 +606,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         gl.clear(gl.DEPTH_BUFFER_BIT);
 
         // CLOSE
-        // ground.draw();
+        ground.draw();
     }
 
     // For window resizing
