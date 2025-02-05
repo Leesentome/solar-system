@@ -118,226 +118,247 @@ def zenith_direction(latitude, longitude, year, month, day, hour, minute, second
 
 UA = 149597870700
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+def plotPlaneteOrbit():
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
 
-X = [[] for p in planetes]
-Y = [[] for p in planetes]
-Z = [[] for p in planetes]
+    X = [[] for p in planetes]
+    Y = [[] for p in planetes]
+    Z = [[] for p in planetes]
 
-# for year in range(1900, 2051):
-#     for m, lenm in enumerate(mois):
-#         if (year%4 == 0) and (m == 2):
-#             lenm += 1
-#         for j in range(1, lenm + 1):
-#             print(f"\r{j:02}/{m+1:02}/{year}", end="")
-#             for i,p in enumerate(planetes):
-#                 x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
-#                 X[i].append(x)
-#                 Y[i].append(y)
-#                 Z[i].append(z)
-# print()
-
-lat = 46.5
-lon = 4.9
-year = 2025
-month = 2
-day = 3
-hour = 12
-minu = 0
-sec = 0
-# while True:
-vDir = []
-for i in range(2):
-    # t = time.time()
-    # t_struct = time.localtime(t)
-
-    # year = t_struct.tm_year
-    # month = t_struct.tm_mon
-    # day = t_struct.tm_mday
-    # hour = t_struct.tm_hour
-    # minu = t_struct.tm_min
-    # sec = t_struct.tm_sec
-
-    # minu += 1
-    # if minu >= 60:
-    #     minu = 0
-    #     hour += 1
-    #     if hour >= 24:
-    #         hour = 0
-    #         day += 1
-    #         if day > mois[month - 1]:
-    #             day = 1
-    #             month += 1
-    #             if month > 12:
-    #                 month = 1
-    #                 year += 1
-
-    month += 3
-
-    x, y, z = terre.get_pos(year, month, day, hour, minu, sec)
-    asc, decl = zenith_direction(lat, lon, year, month, day, hour, minu, sec)
-    plt.plot([0, x], [0, y], [0, z])
-
-    vDir.append([x, y, z])
-
-    r = 0.01
-
-    # u = np.linspace(0, 2 * np.pi, 30)
-    # v = np.linspace(0, np.pi, 15)
-    # X = r * np.outer(np.cos(u), np.sin(v)) + x
-    # Y = r * np.outer(np.sin(u), np.sin(v)) + y
-    # Z = r * np.outer(np.ones(np.size(u)), np.cos(v)) + z
-
-    # dx = 2 * r * np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
-    # dy = 2 * r * np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
-    # dz = 2 * r * np.sin(np.deg2rad(decl))
-
-    # sunDir = -np.array([x, y, z])
-    # up = np.array([dx, dy, dz])
-    # isDay = np.dot(sunDir, up) > 0
-    # pr = "Day  " if isDay else "Night"
+    for year in range(1900, 2051):
+        for m, lenm in enumerate(mois):
+            if (year%4 == 0) and (m == 2):
+                lenm += 1
+            for j in range(1, lenm + 1):
+                print(f"\r{j:02}/{m+1:02}/{year}", end="")
+                for i,p in enumerate(planetes):
+                    x, y, z = p.get_pos(year, m+1, j, 12, 0, 0)
+                    X[i].append(x)
+                    Y[i].append(y)
+                    Z[i].append(z)
+    print()
     
-    # print(f"\r{hour:02}:{minu:02}:{sec:02}, {day:02}/{month:02}/{year} -> {pr}", end="")
+    for i, p in enumerate(planetes):
+        # nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
+        # ax.plot(X[i][-nbPts:], Y[i][-nbPts:], Z[i][-nbPts:])
+        ax.plot(X[i], Y[i], Z[i])
+        # for k in range(nbPts-1):
+        #     ax.plot([X[i][-2-k], X[i][-1-k]], [Y[i][-2-k], Y[i][-1-k]], [Z[i][-2-k], Z[i][-1-k]], color=f"C{i}", alpha=1-k/nbPts, label=f"{p.name}")
+    ax.plot(0, 0, 0, marker='o', markersize=12)
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Z")
+    ax.set_title(f"Year: {year}, Month: {m+1}, Day: {j}")
+    ax.view_init(elev=54, azim=-93, roll=0)
+    ax.axis("equal")
+    # ax.legend()
+    plt.show()
 
-    # ax.cla()
-    # ax.plot([0], [0], [0], 'o', color="yellow")
-    # ax.plot([x], [y], [z], 'o', color="blue")
+def plotEarthRot():
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
 
-    # ax.plot_surface(X, Y, Z, color='b', alpha=0.6)
+    lat = 46.5
+    lon = 4.9
+    # year = 2025
+    # month = 2
+    # day = 3
+    # hour = 12
+    # minu = 0
+    # sec = 0
+    while True:
+        t = time.time()
+        t_struct = time.localtime(t)
 
-    # ax.plot([x, x+dx], [y, y+dy], [z, z+dz], color='black')
-    # ax.plot([x, x], [y, y], [z, z+2*r], color='black')
-    # ax.axis("equal")
-    # plt.pause(0.1)
-# plt.plot()
+        year = t_struct.tm_year
+        month = t_struct.tm_mon
+        day = t_struct.tm_mday
+        hour = t_struct.tm_hour
+        minu = t_struct.tm_min
+        sec = t_struct.tm_sec
 
-v1 = np.array(vDir[0])
-v2 = np.array(vDir[1])
-upDir = np.cross(v1, v2)
-upDir = upDir / np.linalg.norm(upDir)
+        # minu += 1
+        # if minu >= 60:
+        #     minu = 0
+        #     hour += 1
+        #     if hour >= 24:
+        #         hour = 0
+        #         day += 1
+        #         if day > mois[month - 1]:
+        #             day = 1
+        #             month += 1
+        #             if month > 12:
+        #                 month = 1
+        #                 year += 1
 
-print(np.rad2deg(np.acos(np.dot(upDir, [0, 1, 0]))))
+        x, y, z = terre.get_pos(year, month, day, hour, minu, sec)
+        asc, decl = zenith_direction(lat, lon, year, month, day, hour, minu, sec)
+        plt.plot([0, x], [0, y], [0, z])
 
-plt.plot(X[0], Y[0], Z[0])
-plt.plot([0, upDir[0]], [0, upDir[1]], [0, upDir[2]])
-plt.plot([0, 0], [0, 1], [0, 0])
-plt.axis("equal")
-plt.show()
+        r = 0.01
 
-# for i, p in enumerate(planetes):
-#     # nbPts = min(int(p.tpsRev * 0.9), len(X[0])-1)
-#     # ax.plot(X[i][-nbPts:], Y[i][-nbPts:], Z[i][-nbPts:])
-#     ax.plot(X[i], Y[i], Z[i])
-#     # for k in range(nbPts-1):
-#     #     ax.plot([X[i][-2-k], X[i][-1-k]], [Y[i][-2-k], Y[i][-1-k]], [Z[i][-2-k], Z[i][-1-k]], color=f"C{i}", alpha=1-k/nbPts, label=f"{p.name}")
-# ax.plot(0, 0, 0, marker='o', markersize=12)
-# ax.set_xlabel("X")
-# ax.set_ylabel("Y")
-# ax.set_zlabel("Z")
-# ax.set_title(f"Year: {year}, Month: {m+1}, Day: {j}")
-# ax.view_init(elev=54, azim=-93, roll=0)
-# ax.axis("equal")
-# # ax.legend()
-# plt.show()
+        u = np.linspace(0, 2 * np.pi, 30)
+        v = np.linspace(0, np.pi, 15)
+        X = r * np.outer(np.cos(u), np.sin(v)) + x
+        Y = r * np.outer(np.sin(u), np.sin(v)) + y
+        Z = r * np.outer(np.ones(np.size(u)), np.cos(v)) + z
 
-year = 2025
-month = 2
-day = 4
-aurora = 0
-nightfall = 0
-wasDay = False
-for h in range(1, 24):
-    for m in range(0, 60, 1):
-        print(f"\r{h+1:02}:{m:02}:{0:02}, {day:02}/{month:02}/{year}", end="")
-        x, y, z = terre.get_pos(year, month, day, h, m, 0)
-        asc, decl = zenith_direction(46.5, 4.9, year, month, day, h, m, 0)
-        dx = np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
-        dy = np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
-        dz = np.sin(np.deg2rad(decl))
+        dx = 2 * r * np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+        dy = 2 * r * np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+        dz = 2 * r * np.sin(np.deg2rad(decl))
 
-        sDir = -np.array([x, y, z])
-        zDir = np.array([dx, dy, dz])
-        isDay = np.dot(sDir, zDir) > 0
-        if not(wasDay) and isDay:
-            aurora = (h+1, m)
-        if wasDay and not(isDay):
-            nightfall = (h+1, m)
-        wasDay = isDay
+        sunDir = -np.array([x, y, z])
+        up = np.array([dx, dy, dz])
+        isDay = np.dot(sunDir, up) > 0
+        pr = "Day  " if isDay else "Night"
+        
+        print(f"\r{hour:02}:{minu:02}:{sec:02}, {day:02}/{month:02}/{year} -> {pr}", end="")
 
         ax.cla()
-        ax.plot([x, x+.1*dx], [y, y+.1*dy], [z, z+.1*dz])
-        ax.plot([x, x], [y, y], [z-0.1, z+0.1])
-        ax.plot(0, 0, 0, marker='o', markersize=12)
+        ax.plot([0], [0], [0], 'o', color="yellow")
+        ax.plot([x], [y], [z], 'o', color="blue")
+
+        ax.plot_surface(X, Y, Z, color='b', alpha=0.6)
+
+        ax.plot([x, x+dx], [y, y+dy], [z, z+dz], color='black')
+        ax.plot([x, x], [y, y], [z, z+2*r], color='black')
+        ax.axis("equal")
         plt.pause(0.1)
-print()
-print(aurora, nightfall)
+    plt.plot()
+
+def earthRotation2():
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    
+    year = 2025
+    month = 2
+    day = 3
+    hour = 12
+    minu = 0
+    sec = 0
+
+    vDir = []
+    for i in range(2):
+        x, y, z = terre.get_pos(year, month, day, hour, minu, sec)
+        vDir.append([x, y, z])
+        month += 3
+
+    v1 = np.array(vDir[0])
+    v2 = np.array(vDir[1])
+    upDir = np.cross(v1, v2)
+    upDir = upDir / np.linalg.norm(upDir)
+
+    print(np.rad2deg(np.acos(np.dot(upDir, [0, 0, 1]))))
+
+    plt.plot([0, upDir[0]], [0, upDir[1]], [0, upDir[2]])
+    plt.plot([0, 0], [0, 0], [0, 1])
+    plt.axis("equal")
+    plt.show()
+
+def plotEarthRotDay():
+    lat = 46.5
+    lon = 4.9
+    year = 2025
+    month = 2
+    day = 4
+    aurora = 0
+    nightfall = 0
+    wasDay = False
+    for h in range(1, 24):
+        for m in range(0, 60, 1):
+            print(f"\r{h+1:02}:{m:02}:{0:02}, {day:02}/{month:02}/{year}", end="")
+            x, y, z = terre.get_pos(year, month, day, h, m, 0)
+            asc, decl = zenith_direction(lat, lon, year, month, day, h, m, 0)
+            dx = np.cos(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+            dy = np.sin(np.deg2rad(asc)) * np.cos(np.deg2rad(decl))
+            dz = np.sin(np.deg2rad(decl))
+
+            sDir = -np.array([x, y, z])
+            zDir = np.array([dx, dy, dz])
+            isDay = np.dot(sDir, zDir) > 0
+            if not(wasDay) and isDay:
+                aurora = (h+1, m)
+            if wasDay and not(isDay):
+                nightfall = (h+1, m)
+            wasDay = isDay
+
+            ax.cla()
+            ax.plot([x, x+.1*dx], [y, y+.1*dy], [z, z+.1*dz])
+            ax.plot([x, x], [y, y], [z-0.1, z+0.1])
+            ax.plot(0, 0, 0, marker='o', markersize=12)
+            plt.pause(0.1)
+    print()
+    print(aurora, nightfall)
+
+def plotStars():
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    # t = np.linspace(0, 2*np.pi, 100)
+    # z = np.zeros(t.shape)
+    # c = np.cos(t)
+    # s = np.sin(t)
+    # ax.plot(z, c, s, 'black')
+    # ax.plot(c, z, s, 'black')
+    # ax.plot(c, s, z, 'black')
+
+    # consts = [velorum]
+    consts = constellations
+    greek_letters = [
+        "alpha",
+        "beta",
+        "gamma",
+        "delta",
+        "epsilon",
+        "zeta",
+        "eta",
+        "theta",
+        "iota",
+        "kappa",
+        "lambda",
+        "mu",
+        "nu",
+        "xi",
+        "omicron",
+        "pi",
+        "rho",
+        "sigma",
+        "tau",
+        "upsilon",
+        "phi",
+        "chi",
+        "psi",
+        "omega",
+    ]
+    for i, c in enumerate(consts):
+        if len(consts) == 1:
+            for s in c.stars:
+                x, y, z = s.get_pos()
+                if s.magn_app < 6: # and z > 1/np.sqrt(2):
+                    ax.plot(x, y, z, 'o', color=f"C{2 * i}", markersize=2)
+                    ax.text(x, y, z, s.name)
+
+        d = {}
+        for l in c.lines:
+            s1, s2 = l
+            d[s1.name] = s1
+            d[s2.name] = s2
+
+        for n in d:
+            s = d[n]
+            x, y, z = s.get_pos()
+            ax.plot(x, y, z, 'o', color=f"C{2 * i}", markersize=2)
 
 
-# t = np.linspace(0, 2*np.pi, 100)
-# z = np.zeros(t.shape)
-# c = np.cos(t)
-# s = np.sin(t)
-# ax.plot(z, c, s, 'black')
-# ax.plot(c, z, s, 'black')
-# ax.plot(c, s, z, 'black')
+        for l in c.lines:
+            s1, s2 = l[0], l[1]
+            x1, y1, z1 = s1.get_pos()
+            x2, y2, z2 = s2.get_pos()
+            p = 0.9
+            ax.plot([p*x1+(1-p)*x2, (1-p)*x1+p*x2], [p*y1+(1-p)*y2, (1-p)*y1+p*y2], [p*z1+(1-p)*z2, (1-p)*z1+p*z2], color=f"C{2 * i + 1}")
 
-# consts = [velorum]
-# consts = constellations
-# greek_letters = [
-#     "alpha",
-#     "beta",
-#     "gamma",
-#     "delta",
-#     "epsilon",
-#     "zeta",
-#     "eta",
-#     "theta",
-#     "iota",
-#     "kappa",
-#     "lambda",
-#     "mu",
-#     "nu",
-#     "xi",
-#     "omicron",
-#     "pi",
-#     "rho",
-#     "sigma",
-#     "tau",
-#     "upsilon",
-#     "phi",
-#     "chi",
-#     "psi",
-#     "omega",
-# ]
-# for i, c in enumerate(consts):
-#     if len(consts) == 1:
-#         for s in c.stars:
-#             x, y, z = s.get_pos()
-#             if s.magn_app < 6: # and z > 1/np.sqrt(2):
-#                 ax.plot(x, y, z, 'o', color=f"C{2 * i}", markersize=2)
-#                 ax.text(x, y, z, s.name)
+    ax.view_init(elev=-30, azim=-45, roll=0)
+    ax.axis('equal')
 
-#     d = {}
-#     for l in c.lines:
-#         s1, s2 = l
-#         d[s1.name] = s1
-#         d[s2.name] = s2
-
-#     for n in d:
-#         s = d[n]
-#         x, y, z = s.get_pos()
-#         ax.plot(x, y, z, 'o', color=f"C{2 * i}", markersize=2)
-
-
-#     for l in c.lines:
-#         s1, s2 = l[0], l[1]
-#         x1, y1, z1 = s1.get_pos()
-#         x2, y2, z2 = s2.get_pos()
-#         p = 0.9
-#         ax.plot([p*x1+(1-p)*x2, (1-p)*x1+p*x2], [p*y1+(1-p)*y2, (1-p)*y1+p*y2], [p*z1+(1-p)*z2, (1-p)*z1+p*z2], color=f"C{2 * i + 1}")
-
-# ax.view_init(elev=-30, azim=-45, roll=0)
-# ax.axis('equal')
-
-# plt.show()
+    plt.show()

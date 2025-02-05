@@ -79,6 +79,14 @@ class AllStar {
             stars.map(star => star.magn_app)
         )
 
+        this.sizes = new Float32Array(
+            stars.map(star => 3)
+        )
+
+        this.colors = new Float32Array(
+            stars.flatMap(star => [1, 1, 1])
+        )
+
         this.vertexBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
@@ -90,6 +98,18 @@ class AllStar {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this.magnitudes, this.gl.STATIC_DRAW);
 
         this.magnitudeAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_magnitude");
+
+        this.colorBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.colors, this.gl.STATIC_DRAW);
+
+        this.colorAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_color");
+
+        this.sizeBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.sizes, this.gl.STATIC_DRAW);
+
+        this.sizeAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_size");
 
     }
 
@@ -105,56 +125,204 @@ class AllStar {
         this.gl.vertexAttribPointer(this.magnitudeAttributeLocation, 1, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(this.magnitudeAttributeLocation);
 
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+        this.gl.vertexAttribPointer(this.colorAttributeLocation, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.colorAttributeLocation);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
+        this.gl.vertexAttribPointer(this.sizeAttributeLocation, 1, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.sizeAttributeLocation);
+
         this.gl.drawArrays(this.gl.POINTS, 0, this.stars.length);
     }
 }
 
 class AllPlanet {
-    // constructor(gl, shaderProgram, planets, ref) {
-    //     this.gl = gl;
-    //     this.shaderProgram = shaderProgram;
+    constructor(gl, shaderProgram, planets, ref) {
+        this.gl = gl;
+        this.shaderProgram = shaderProgram;
 
-    //     this.shaderProgram.use();
+        this.shaderProgram.use();
 
-    //     this.planets = planets
-    //     this.ref = ref
+        this.planets = planets
+        this.ref = ref
 
-        // this.vertices = new Float32Array(
-        //     planets.flatMap(planets => planets.get_pos() - ref.getpos())
-        // )
+        this.vertices = new Float32Array(
+            planets.flatMap(planet => {
+                let [px, py, pz] = planet.get_pos(2000, 1, 1, 0, 0, 0);
+                let [rx, ry, rz] = ref.get_pos(2000, 1, 1, 0, 0, 0);
+                return [px - rx, py - ry, pz - rz];
+            })
+        );
 
-        // this.magnitudes = new Float32Array(
-        //     planets.map(planets => planets.magn_app)
-        // )
+        this.magnitudes = new Float32Array(
+            planets.map(planet => 0.)
+        )
 
-        // this.vertexBuffer = this.gl.createBuffer();
-        // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
-        // this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.STATIC_DRAW);
+        this.colors = new Float32Array(
+            stars.flatMap(planet => [1, 0, 0])
+        )
 
-        // this.positionAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_position")
+        this.sizes = new Float32Array(
+            stars.map(planet => 3)
+        )
 
-        // this.magnitudeBuffer = this.gl.createBuffer();
-        // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.magnitudeBuffer);
-        // this.gl.bufferData(this.gl.ARRAY_BUFFER, this.magnitudes, this.gl.STATIC_DRAW);
+        this.vertexBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.DYNAMIC_DRAW);
 
-        // this.magnitudeAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_magnitude");
+        this.positionAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_position")
 
-    // }
+        this.magnitudeBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.magnitudeBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.magnitudes, this.gl.STATIC_DRAW);
 
-    // draw() {
-    //     this.shaderProgram.use();
+        this.magnitudeAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_magnitude");
 
-    //     // Bind position buffer
-    //     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
-    //     this.gl.vertexAttribPointer(this.positionAttributeLocation, 3, this.gl.FLOAT, false, 0, 0);
-    //     this.gl.enableVertexAttribArray(this.positionAttributeLocation);
+        this.colorBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.colors, this.gl.STATIC_DRAW);
 
-    //     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.magnitudeBuffer);
-    //     this.gl.vertexAttribPointer(this.magnitudeAttributeLocation, 1, this.gl.FLOAT, false, 0, 0);
-    //     this.gl.enableVertexAttribArray(this.magnitudeAttributeLocation);
+        this.colorAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_color");
 
-    //     this.gl.drawArrays(this.gl.POINTS, 0, this.stars.length);
-    // }
+        this.sizeBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.sizes, this.gl.STATIC_DRAW);
+
+        this.sizeAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_size");
+
+    }
+
+    draw() {
+        this.shaderProgram.use();
+
+        let now = new Date();
+        let year = now.getUTCFullYear();
+        let month = now.getUTCMonth() + 1; // Months are 0-based in JS
+        let day = now.getUTCDate();
+        let hour = now.getUTCHours();
+        let minute = now.getUTCMinutes();
+        let second = now.getUTCSeconds();
+
+        this.vertices = new Float32Array(
+            this.planets.flatMap(planet => {
+                let [px, py, pz] = planet.get_pos(year, month, day, hour, minute, second);
+                let [rx, ry, rz] = this.ref.get_pos(year, month, day, hour, minute, second);
+                const dir = [px - rx, py - ry, pz - rz]
+                const nDir = Math.sqrt(dir[0]*dir[0]+dir[1]*dir[1]+dir[2]*dir[2]);
+                return [dir[0] / nDir, dir[1] / nDir, dir[2] / nDir];
+            })
+        );
+
+        // Bind position buffer
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.DYNAMIC_DRAW);
+
+        this.gl.vertexAttribPointer(this.positionAttributeLocation, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.positionAttributeLocation);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.magnitudeBuffer);
+        this.gl.vertexAttribPointer(this.magnitudeAttributeLocation, 1, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.magnitudeAttributeLocation);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+        this.gl.vertexAttribPointer(this.colorAttributeLocation, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.colorAttributeLocation);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
+        this.gl.vertexAttribPointer(this.sizeAttributeLocation, 1, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.sizeAttributeLocation);
+
+        this.gl.drawArrays(this.gl.POINTS, 0, this.planets.length);
+    }
+}
+
+class Sun {
+    constructor(gl, shaderProgram, ref) {
+        this.gl = gl;
+        this.shaderProgram = shaderProgram;
+
+        this.shaderProgram.use();
+
+        this.ref = ref
+
+        let [px, py, pz] = [0, 0, 0];
+        let [rx, ry, rz] = ref.get_pos(2000, 1, 1, 0, 0, 0);
+        const dir = [px - rx, py - ry, pz - rz]
+        const nDir = Math.sqrt(dir[0]*dir[0]+dir[1]*dir[1]+dir[2]*dir[2]);
+        this.vertices = new Float32Array([dir[0] / nDir, dir[1] / nDir, dir[2] / nDir]);
+
+        this.magnitudes = new Float32Array([0]);
+
+        this.colors = new Float32Array([1, 1, 0]);
+
+        this.sizes = new Float32Array([8.])
+
+        this.vertexBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.DYNAMIC_DRAW);
+
+        this.positionAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_position")
+
+        this.magnitudeBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.magnitudeBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.magnitudes, this.gl.STATIC_DRAW);
+
+        this.magnitudeAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_magnitude");
+
+        this.colorBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.colors, this.gl.STATIC_DRAW);
+
+        this.colorAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_color");
+
+        this.sizeBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.sizes, this.gl.STATIC_DRAW);
+
+        this.sizeAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_size");
+
+    }
+
+    draw() {
+        this.shaderProgram.use();
+
+        let now = new Date();
+        let year = now.getUTCFullYear();
+        let month = now.getUTCMonth() + 1; // Months are 0-based in JS
+        let day = now.getUTCDate();
+        let hour = now.getUTCHours();
+        let minute = now.getUTCMinutes();
+        let second = now.getUTCSeconds();
+
+        
+        let [px, py, pz] = [0, 0, 0];
+        let [rx, ry, rz] = this.ref.get_pos(year, month, day, hour, minute, second);
+        const dir = [px - rx, py - ry, pz - rz]
+        const nDir = Math.sqrt(dir[0]*dir[0]+dir[1]*dir[1]+dir[2]*dir[2]);
+        this.vertices = new Float32Array([dir[0] / nDir, dir[1] / nDir, dir[2] / nDir]);
+
+        // Bind position buffer
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.vertices, this.gl.DYNAMIC_DRAW);
+
+        this.gl.vertexAttribPointer(this.positionAttributeLocation, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.positionAttributeLocation);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.magnitudeBuffer);
+        this.gl.vertexAttribPointer(this.magnitudeAttributeLocation, 1, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.magnitudeAttributeLocation);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+        this.gl.vertexAttribPointer(this.colorAttributeLocation, 3, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.colorAttributeLocation);
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
+        this.gl.vertexAttribPointer(this.sizeAttributeLocation, 1, this.gl.FLOAT, false, 0, 0);
+        this.gl.enableVertexAttribArray(this.sizeAttributeLocation);
+
+        this.gl.drawArrays(this.gl.POINTS, 0, 1);
+    }
 }
 
 class ConstellationDraw {
@@ -268,6 +436,40 @@ class Ground {
     }
 }
 
+function deg2rad(d) {
+    return d * Math.PI / 180;
+}
+
+function julianDay(year, month, day){
+    if (month <= 2) {
+        month += 12;
+        year -= 1;
+    }
+
+    A = Math.floor(year / 100)
+    
+    if (year < 1582) {B = 0}
+    else {B = Math.floor(2 - A + Math.floor(A / 4))}
+
+    return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+}
+
+function sideralTimeGreewich(julianday) {
+    T = (julianday - 2451545.0) / 36525;
+    temp  = (280.46061837 + 360.98564736629 * (julianday - 2451545) + 0.000387933 * T * T - (T * T * T) / 38710000) % 360;
+    return temp;
+}
+
+function localSideralTime(longitude, year, month, day, hour, minute, second) {
+    D = day + hour / 24 + minute / 1440 + second / 86400;
+    return sideralTimeGreewich(julianDay(year, month, D)) + longitude;
+}
+
+function zenith_direction(latitude, longitude, year, month, day, hour, minute, second) {
+    lst = localSideralTime(longitude, year, month, day, hour, minute, second)
+    return [lst, latitude]
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
     const canvas = document.getElementById("paintCanvas");
     const resolutionMultiplier = 1;
@@ -298,6 +500,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     // DEFINE OBJECT
     const allStars = new AllStar(gl, starProgram, stars);
 
+    const filteredPlanets = planets.filter(planet => planet !== terre);
+    const allPlanets = new AllPlanet(gl, starProgram, filteredPlanets, terre);
+
+    const sun = new Sun(gl, starProgram, terre);
+
     const constelDraws = []
     for (var constel of constellations) {
         constelDraws.push(new ConstellationDraw(gl, constellationProgram, constel));
@@ -306,9 +513,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     const ground = new Ground(gl, simpleProgram, [0, 1, 0]);
     const lightPos = [0, 10, 0];
 
-    const long = 0;
-    const lat = 0;
-    const up = [0, 1, 0];
+    const long = 4.9;
+    const lat = 46.5;
+
+    let now = new Date();
+    let year = now.getUTCFullYear();
+    let month = now.getUTCMonth() + 1; // Months are 0-based in JS
+    let day = now.getUTCDate();
+    let hour = now.getUTCHours();
+    let minute = now.getUTCMinutes();
+    let second = now.getUTCSeconds();
+    let [asc, decl] = zenith_direction(lat, long, year, month, day, hour, minute, second);
+    
+    const earthCoordMat = mat4.create();
+    mat4.rotateZ(earthCoordMat, earthCoordMat, deg2rad(decl));
+    mat4.rotateY(earthCoordMat, earthCoordMat, deg2rad(-asc));
 
     // INIT ENV
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -330,12 +549,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     let pitch = 0;
     function computeViewMatrix() {
         let dir = [
-            Math.cos(pitch) * Math.sin(yaw),
+            Math.cos(pitch) * Math.cos(yaw),
             Math.sin(pitch),
-            -Math.cos(pitch) * Math.cos(yaw)
+            Math.cos(pitch) * Math.sin(yaw)
         ];
         let target = [eye[0] + dir[0], eye[1] + dir[1], eye[2] + dir[2]];
-        mat4.lookAt(viewMatrix, eye, target, up);
+        mat4.lookAt(viewMatrix, eye, target, [0, 1, 0]);
         
         gl.useProgram(starProgram.program);
         gl.uniformMatrix4fv(gl.getUniformLocation(starProgram.program, "u_view"), false, viewMatrix);
@@ -352,12 +571,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     gl.uniformMatrix4fv(uStarProjection, false, projectionMatrix);
     const uStarView = gl.getUniformLocation(starProgram.program, "u_view");
     gl.uniformMatrix4fv(uStarView, false, viewMatrix);
+    const uStarEarthCoord = gl.getUniformLocation(starProgram.program, "u_earthCoord");
+    gl.uniformMatrix4fv(uStarEarthCoord, false, earthCoordMat);
 
     gl.useProgram(constellationProgram.program);
     const uConstelProjection = gl.getUniformLocation(constellationProgram.program, "u_projection");
     gl.uniformMatrix4fv(uConstelProjection, false, projectionMatrix);
     const uConstelView = gl.getUniformLocation(constellationProgram.program, "u_view");
     gl.uniformMatrix4fv(uConstelView, false, viewMatrix);
+    const uConstelEarthCoord = gl.getUniformLocation(constellationProgram.program, "u_earthCoord");
+    gl.uniformMatrix4fv(uConstelEarthCoord, false, earthCoordMat);
 
     gl.useProgram(simpleProgram.program);
     const uSimpleProjection = gl.getUniformLocation(simpleProgram.program, "u_projection");
@@ -377,6 +600,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         for (var constel of constelDraws) {
             constel.draw()
         }
+        allPlanets.draw();
+        sun.draw();
 
         gl.clear(gl.DEPTH_BUFFER_BIT);
 

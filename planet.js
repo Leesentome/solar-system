@@ -26,7 +26,7 @@ class Planet {
             year -= 1;
             month += 12;
         }
-        const Teph = int(365.25 * year) + int(30.6001 * (month + 1)) + day + hour / 24 + minute / 1440 + second / 86400 + 1720981.5;
+        const Teph = Math.floor(365.25 * year) + Math.floor(30.6001 * (month + 1)) + day + hour / 24 + minute / 1440 + second / 86400 + 1720981.5;
         const T = (Teph - 2451545) / 36525;
 
         const a = this.a0 + this.ap * T;
@@ -40,7 +40,7 @@ class Planet {
         var M = L - om + this.b * T * T + this.c * Math.cos(this.f * T) + this.s * Math.sin(this.f * T);
         var M = ((M + 180) % 360) - 180;
 
-        const estar = 180/Math.pi * e;
+        const estar = 180/Math.PI * e;
 
         var E = M + estar * Math.sin(deg2rad(M));
         var DM = M - (E - estar * Math.sin(deg2rad(E)));
@@ -65,7 +65,7 @@ class Planet {
         const yeq = Math.cos(deg2rad(epsilon)) * yecl - Math.sin(deg2rad(epsilon)) * zecl;
         const zeq = Math.sin(deg2rad(epsilon)) * yecl + Math.cos(deg2rad(epsilon)) * zecl;
 
-        return xeq, yeq, zeq;
+        return [xeq, zeq, -yeq];
     }
 }
 mercure = new Planet("Mercure", 88, 0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081);

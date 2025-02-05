@@ -7,10 +7,6 @@ function degMinSec2deg(d, m, s) {
     return Math.sign(d) * (Math.abs(d) + m/60 + s/3600);
 }
 
-function deg2rad(d) {
-    return d * Math.PI / 180;
-}
-
 class Star {
     constructor(nom, alpha, declinaison, magnitude_apparente) {
         this.name = nom;
