@@ -160,11 +160,11 @@ class AllPlanet {
         )
 
         this.colors = new Float32Array(
-            stars.flatMap(planet => [1, 0, 0])
+            planets.flatMap(planet => planet.color)
         )
 
         this.sizes = new Float32Array(
-            stars.map(planet => 3)
+            planets.map(planet => 8)
         )
 
         this.vertexBuffer = this.gl.createBuffer();
@@ -606,7 +606,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         gl.clear(gl.DEPTH_BUFFER_BIT);
 
         // CLOSE
-        ground.draw();
+        // ground.draw();
     }
 
     // For window resizing
