@@ -1,12 +1,4 @@
 
-function hourMinSec2deg(h, m, s) {
-    return 360/24 * (h + m/60 + s/3600);
-}
-
-function degMinSec2deg(d, m, s) {
-    return Math.sign(d) * (Math.abs(d) + m/60 + s/3600);
-}
-
 class Star {
     constructor(nom, alpha, declinaison, magnitude_apparente) {
         this.name = nom;

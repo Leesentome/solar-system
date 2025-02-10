@@ -12,7 +12,7 @@ varying float w_magnitude;
 varying vec3 w_color;
 
 void main() {
-    gl_Position = u_projection * u_view  * u_earthCoord * vec4(a_position, 1.0);
+    gl_Position = u_projection * u_view * vec4(a_position, 1.0);
     w_magnitude = a_magnitude;
     w_color = a_color;
     gl_PointSize = a_size;
