@@ -151,6 +151,23 @@ document.addEventListener("DOMContentLoaded", async function () {
         drawScene();
     });
 
+    const latInput = document.getElementById("latInput");
+    const lonInput = document.getElementById("lonInput");
+    function handleInput() {
+        const lat = Math.max(-90, Math.min(90, parseFloat(latInput.value)));
+        const lon = Math.max(-180, Math.min(180, parseFloat(lonInput.value)));
+
+        if (!isNaN(lat) && lat >= -90 && lat <= 90 && !isNaN(lon) && lon >= -90 && lon <= 90) {
+            [asc, decl] = zenith_direction(lat, lon, year, month, day, hour, minute, second);
+            computeViewMatrix();
+            ground.asc = asc;
+            ground.decl = decl;
+            drawScene();
+        }
+    }
+    latInput.addEventListener("input", handleInput);
+    lonInput.addEventListener("input", handleInput);
+
     // For window resizing
     function handleResize() {
         // Update the canvas size

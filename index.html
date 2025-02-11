@@ -25,7 +25,18 @@
         </button>
     </div>
     <div id="inputs">
-
+        <div id="lat">
+            <input id="latInput" type="number" id="floatInput" min="-90" max="90" step="0.01" value="46.432117"/>
+            <span>°N</span>
+        </div>
+        <div id="lon">
+            <input id="lonInput" type="number" id="floatInput" min="-180" max="180" step="0.01" value="4.6616785"/>
+            <span>°E</span>
+        </div>
+        <div id="time">
+            <input id="timeInput" type="time" value="00:00:00" />
+            <input id="dateInput" type="date" value="01/01/2000"/>
+        </div>
     </div>
     <canvas id="paintCanvas"></canvas>
 </body>
