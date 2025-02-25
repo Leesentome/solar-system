@@ -39,10 +39,11 @@ body {
     width: 3em;
     aspect-ratio: 1;
 
-    border-radius: 0.5em 0 0 0.5em;
+    border: solid;
+    border-radius: 0.5em;
     background-color: #000000;
     border-color: #008000;
-    border-width: 0.15em 0 0.15em 0.15em;
+    border-width: 0.1em;
 }
 
 #inputs {
@@ -55,9 +56,10 @@ body {
     flex-direction: row;
     padding: 2px 2px 0 2px;
 
+    background-color: #000000;
+
     border: solid;
     border-radius: 0.5em 0.5em 0 0;
-    background-color: #000000;
     border-color: #008000;
     border-width: 0.1em 0.1em 0 0.1em;
 }
@@ -68,43 +70,91 @@ input[type=number]::-webkit-outer-spin-button {
     margin: 0;
 }
 
-#inputs > #lat {
-    display: flex;
-    flex-direction: row;
-    padding: 2px;
-
-    width: 6em;
-
-    color: #008000;
-    border: solid;
-    border-radius: 0.5em 0 0 0;
-    background-color: #000000;
-    border-color: #008000;
-    border-width: 0.15em 0.15em 0 0.15em;
+input[type="time"]::-webkit-inner-spin-button,
+input[type="time"]::-webkit-outer-spin-button,
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-#inputs > #lon {
-    display: flex;
-    flex-direction: row;
-    padding: 2px;
-
-    width: 6em;
-
-    color: #008000;
-    border: solid;
-    border-radius: 0 0.5em 0 0;
-    background-color: #000000;
-    border-color: #008000;
-    border-width: 0.15em 0.15em 0 0;
+input[type="date"],
+input[type="time"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    background: none;
 }
 
-#inputs > div > * {
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
+#position {
+    margin: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2px;
+    overflow: hidden;
+
+    border: solid;
+    border-color: #008000;
+    border-radius: 0.5em;
+    border-width: 0.1em;
+
+}
+
+.lonLatInput {
+    width: 100%;
     color: #008000;
     background-color: #000000;
     border-width: 0 0 0 0;
+    margin: 2px;
+
+    display: flex;
+    justify-content: end;
 }
 
-#inputs > div > input {
+.lonLatInput > input {
+    color: #008000;
+    background-color: #000000;
+    border-width: 0 0 0 0;
+    margin: 2px;
     text-align: right;
+    flex-grow: 1;
+}
+
+.lonLatInput > span {
+    color: #008000;
+    background-color: #000000;
+    border-width: 0 0 0 0;
+    margin: 2px;
+    text-align: left;
+}
+
+#time {
+    margin: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 2px;
+    overflow: hidden;
+
+    border: solid;
+    border-color: #008000;
+    border-radius: 0.5em;
+    border-width: 0.1em;
+}
+
+#time > * {
+    color: #008000;
+    background-color: #000000;
+    border-width: 0 0 0 0;
+    margin: 2px;
+    margin: 2px;
 }
 

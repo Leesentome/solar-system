@@ -18,24 +18,26 @@
 <body>
     <div id="styles">
         <button id="toggleGroundBtn">
-            <img src="constellation.svg" alt="SVG Icon" />
+            <img src="ground.svg" alt="SVG Icon" />
         </button>
         <button id="toggleConstellationBtn">
             <img src="constellation.svg" alt="SVG Icon" />
         </button>
     </div>
     <div id="inputs">
-        <div id="lat">
-            <input id="latInput" type="number" id="floatInput" min="-90" max="90" step="0.01" value="46.432117"/>
-            <span>°N</span>
-        </div>
-        <div id="lon">
-            <input id="lonInput" type="number" id="floatInput" min="-180" max="180" step="0.01" value="4.6616785"/>
-            <span>°E</span>
+        <div id="position">
+            <div class="lonLatInput" id="lat">
+                <input id="latInput" type="number" id="floatInput" min="-90" max="90"/>
+                <span>°N</span>
+            </div>
+            <div class="lonLatInput" id="lon">
+                <input id="lonInput" type="number" id="floatInput" min="-180" max="180"/>
+                <span>°E</span>
+            </div>
         </div>
         <div id="time">
-            <input id="timeInput" type="time" value="00:00:00" />
-            <input id="dateInput" type="date" value="01/01/2000"/>
+            <input id="timeInput" type="time"/>
+            <input id="dateInput" type="date"/>
         </div>
     </div>
     <canvas id="paintCanvas"></canvas>

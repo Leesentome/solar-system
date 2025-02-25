@@ -43,11 +43,29 @@ document.addEventListener("DOMContentLoaded", async function () {
     let drawGround = true;
 
     const lightPos = [0, 10, 0];
+    
+    const latInput = document.getElementById("latInput");
+    const lonInput = document.getElementById("lonInput");
 
-    const long = 4.6616785;
-    const lat = 46.432117;
+    const long = 4.66167;
+    const lat = 46.4321;
+
+    latInput.value = lat
+    lonInput.value = long
+
+    const timeInput = document.getElementById("timeInput");
+    const dateInput = document.getElementById("dateInput");
 
     let now = new Date();
+
+    const dateStr = now.toISOString().split("T")[0];
+    dateInput.value = dateStr;
+
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    timeInput.value = `${hours}:${minutes}:${seconds}`;
+
     let year = now.getUTCFullYear();
     let month = now.getUTCMonth() + 1;
     let day = now.getUTCDate();
@@ -151,8 +169,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         drawScene();
     });
 
-    const latInput = document.getElementById("latInput");
-    const lonInput = document.getElementById("lonInput");
     function handleInput() {
         const lat = Math.max(-90, Math.min(90, parseFloat(latInput.value)));
         const lon = Math.max(-180, Math.min(180, parseFloat(lonInput.value)));
@@ -167,6 +183,31 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     latInput.addEventListener("input", handleInput);
     lonInput.addEventListener("input", handleInput);
+
+    function handleTimeChange() {
+        const dateParts = dateInput.value.split("-");
+        if (dateParts.length === 3) {
+            year = parseInt(dateParts[0]);
+            month = parseInt(dateParts[1]);
+            day = parseInt(dateParts[2]);
+        }
+
+        const timeParts = timeInput.value.split(":");
+        if (timeParts.length >= 2) {
+            hour = parseInt(timeParts[0]);
+            minute = parseInt(timeParts[1]);
+            second = timeParts.length === 3 ? parseInt(timeParts[2]) : 0;
+        }
+
+        [asc, decl] = zenith_direction(lat, long, year, month, day, hour, minute, second);
+        computeViewMatrix();
+        ground.asc = asc;
+        ground.decl = decl;
+        drawScene();
+    }
+    timeInput.addEventListener("input", handleTimeChange);
+    dateInput.addEventListener("input", handleTimeChange);
+
 
     // For window resizing
     function handleResize() {
