@@ -19,7 +19,6 @@ void main() {
 
     vec3 lightColor = vec3(1);
 
-    // phong
     vec3 L = normalize(u_lightPos - w_Position).xyz;
     vec3 N = normalize(v_normal);
     vec3 R = 2.*dot(L, N)*N - L;
