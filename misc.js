@@ -1,4 +1,18 @@
 
+function dot(a1, a2) {
+    if (a1.lenght == a2.lenght) {
+        return a1.map((u1, i) => u1 * a2[i]).reduce((acc, val) => acc + val, 0)
+    }
+}
+
+function cross(v1, v2) {
+    return [
+        v1[1] * v2[2] - v1[2] * v2[1],
+        v1[2] * v2[0] - v1[0] * v2[2],
+        v1[0] * v2[1] - v1[1] * v2[0] 
+    ]
+}
+
 function hourMinSec2deg(h, m, s) {
     return 360/24 * (h + m/60 + s/3600)
 }

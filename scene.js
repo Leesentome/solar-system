@@ -122,8 +122,15 @@ class AllPlanet {
         )
 
         this.sizes = new Float32Array(
-            this.planets.flatMap(planet => [planet.size, planet.size, planet.size, planet.size])
+            this.planets.flatMap(planet => {
+                let [px, py, pz] = planet.get_pos(this.year, this.month, this.day, this.hour, this.minute, this.second)
+                let [rx, ry, rz] = this.ref.get_pos(this.year, this.month, this.day, this.hour, this.minute, this.second)
+                let size = planet.size / Math.sqrt((px-rx)*(px-rx)+(py-ry)*(py-ry)+(pz-rz)*(pz-rz))
+                return [size, size, size, size]
+            })
         )
+
+        console.log(this.sizes)
 
         const indices = []
         for (let i = 0; i < this.planets.length; i++) {

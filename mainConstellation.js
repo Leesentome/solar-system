@@ -119,14 +119,13 @@ document.addEventListener("DOMContentLoaded", async function () {
             gl.uniformMatrix4fv(gl.getUniformLocation(p.program, "u_view"), false, viewMatrix)
         }
 
-        const right = [Math.cos(pitch) * Math.cos(yaw + Math.PI / 2), 0, Math.cos(pitch) * Math.sin(yaw + Math.PI / 2)]
-        const up = [Math.sin(pitch), Math.cos(pitch), 0]
-        const nright = normalize(right)
-        const nup = normalize(up)
+        const right = [viewMatrix[0], viewMatrix[4], viewMatrix[8]]
+        const up = [viewMatrix[1], viewMatrix[5], viewMatrix[9]]
+
         
         gl.useProgram(planetProgram.program)
-        gl.uniform3fv(gl.getUniformLocation(planetProgram.program, "u_camRight"), new Float32Array(nright))
-        gl.uniform3fv(gl.getUniformLocation(planetProgram.program, "u_camUp"), new Float32Array(nup))
+        gl.uniform3fv(gl.getUniformLocation(planetProgram.program, "u_camRight"), new Float32Array(right))
+        gl.uniform3fv(gl.getUniformLocation(planetProgram.program, "u_camUp"), new Float32Array(up))
     }
     computeViewMatrix()
 
@@ -175,7 +174,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const lat = Math.max(-90, Math.min(90, parseFloat(latInput.value)))
         const lon = Math.max(-180, Math.min(180, parseFloat(lonInput.value)))
 
-        if (!isNaN(lat) && lat >= -90 && lat <= 90 && !isNaN(lon) && lon >= -90 && lon <= 90) {
+        if (!isNaN(lat) && lat > -90 && lat < 90 && !isNaN(lon) && lon > -180 && lon < 180) {
             [asc, decl] = zenith_direction(lat, lon, year, month, day, hour, minute, second)
             computeViewMatrix()
             ground.asc = asc

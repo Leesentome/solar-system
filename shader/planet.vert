@@ -14,8 +14,8 @@ varying vec3 v_color;
 
 void main() {
     vec3 worldPos = a_position 
-                  + (a_offset.x * a_size * u_camRight) 
-                  + (a_offset.y * a_size * u_camUp);
+                  + (a_offset.x * a_size * u_camRight * 1000.)
+                  + (a_offset.y * a_size * u_camUp * 1000.);
 
     v_uv = a_offset * 0.5 + 0.5;
     v_color = a_color;
