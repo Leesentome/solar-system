@@ -1,11 +1,9 @@
 
-UATOKM = 1/149597870.700
-
 class Planet {
     constructor(nom, color, size, tpsRev, a0, ap, e0, ep, I0, Ip, L0, Lp, om0, omp, Om0, Omp, b=0, c=0, s=0, f=0) {
         this.name = nom
         this.color = color
-        this.size = size * UATOKM
+        this.size = size * KMTOUA
         this.tpsRev = tpsRev
         this.a0 = a0
         this.ap = ap

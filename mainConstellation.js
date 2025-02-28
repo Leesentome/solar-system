@@ -27,13 +27,17 @@ document.addEventListener("DOMContentLoaded", async function () {
     const simpleProgram = new ShaderProgram(gl, 'simple')
     await simpleProgram.init()
 
+    const skyProgram = new ShaderProgram(gl, 'sky')
+    await skyProgram.init()
+
     const programs = [starProgram, planetProgram, constellationProgram, simpleProgram]
 
     // DEFINE OBJECT
 
     const allStars = new AllStar(gl, starProgram, stars)
 
-    const filteredPlanets = planets.filter(planet => planet !== terre)
+    
+    const filteredPlanets = planets.filter(planet => planet !== terre).concat([sun])
     const allPlanets = new AllPlanet(gl, planetProgram, filteredPlanets, terre)
 
     const constelDraws = []
@@ -41,6 +45,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         constelDraws.push(new ConstellationDraw(gl, constellationProgram, constel))
     }
     let drawConstellation = true
+
+    const sky = new Ground(gl, skyProgram)
+    let drawSky = false
 
     const ground = new Ground(gl, simpleProgram)
     let drawGround = true
@@ -95,8 +102,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     // PERSPCTIVE / VIEW
     const projectionMatrix = mat4.create()
     const aspectRatio = canvas.width / canvas.height
-    const viewAngleVer = Math.PI / 3
-    mat4.perspective(projectionMatrix, viewAngleVer, aspectRatio, 0.1, 20.0)
+    const viewAngleVer = Math.PI / 6
+    mat4.perspective(projectionMatrix, viewAngleVer, aspectRatio, 0.1, 200.0)
     
     const viewMatrix = mat4.create()
     const eye = [0, 0.2, 0]
@@ -121,7 +128,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const right = [viewMatrix[0], viewMatrix[4], viewMatrix[8]]
         const up = [viewMatrix[1], viewMatrix[5], viewMatrix[9]]
-
         
         gl.useProgram(planetProgram.program)
         gl.uniform3fv(gl.getUniformLocation(planetProgram.program, "u_camRight"), new Float32Array(right))
@@ -138,6 +144,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     gl.useProgram(simpleProgram.program)
     gl.uniform4fv(gl.getUniformLocation(simpleProgram.program, "u_cameraPos"), new Float32Array(eye.concat([1])))
     gl.uniform4fv(gl.getUniformLocation(simpleProgram.program, "u_lightPos"), new Float32Array(lightPos.concat([1])))
+    
+    gl.useProgram(skyProgram.program)
+    gl.uniform4fv(gl.getUniformLocation(skyProgram.program, "u_cameraPos"), new Float32Array(eye.concat([1])))
 
     // DRAW LOOP
     function drawScene() {
@@ -151,6 +160,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
         }
         allPlanets.draw()
+
+        // if (drawSky) sky.draw()
 
         gl.clear(gl.DEPTH_BUFFER_BIT)
 
@@ -258,6 +269,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     canvas.addEventListener("mouseup", () => {
         isDragging = false
+        drawScene()
+    })
+
+    canvas.addEventListener("wheel", (event) => {
+        event.preventDefault()
+        
+        fov += event.deltaY * 0.001
+        fov = Math.max(Math.PI / 12, Math.min(Math.PI / 2, fov))
+    
+        mat4.perspective(projectionMatrix, fov, canvas.width / canvas.height, 0.1, 200.0)
+    
+        for (let p of programs) {
+            gl.useProgram(p.program)
+            gl.uniformMatrix4fv(gl.getUniformLocation(p.program, "u_projection"), false, projectionMatrix)
+        }
+    
         drawScene()
     })
 

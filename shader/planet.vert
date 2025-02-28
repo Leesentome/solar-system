@@ -13,11 +13,12 @@ varying vec2 v_uv;
 varying vec3 v_color;
 
 void main() {
+    float scale = 1.;
     vec3 worldPos = a_position 
-                  + (a_offset.x * a_size * u_camRight * 1000.)
-                  + (a_offset.y * a_size * u_camUp * 1000.);
+                  + (a_offset.x * u_camRight * a_size * scale)
+                  + (a_offset.y * u_camUp * a_size * scale);
 
-    v_uv = a_offset * 0.5 + 0.5;
+    v_uv = a_offset;
     v_color = a_color;
     
     gl_Position = u_projection * u_view * vec4(worldPos, 1.0);

@@ -1,4 +1,6 @@
 
+KMTOUA = 1/149597870.700
+
 function dot(a1, a2) {
     if (a1.lenght == a2.lenght) {
         return a1.map((u1, i) => u1 * a2[i]).reduce((acc, val) => acc + val, 0)

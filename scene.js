@@ -130,8 +130,6 @@ class AllPlanet {
             })
         )
 
-        console.log(this.sizes)
-
         const indices = []
         for (let i = 0; i < this.planets.length; i++) {
             let index = i * 4
@@ -179,6 +177,7 @@ class AllPlanet {
             this.planets.flatMap(planet => {
                 let [px, py, pz] = planet.get_pos(this.year, this.month, this.day, this.hour, this.minute, this.second)
                 let [rx, ry, rz] = this.ref.get_pos(this.year, this.month, this.day, this.hour, this.minute, this.second)
+                console.log(planet.name, planet.size, Math.sqrt(dot([px - rx, py - ry, pz - rz], [px - rx, py - ry, pz - rz])))
                 return Array(4).fill([px - rx, py - ry, pz - rz]).flat()
             })
         )
@@ -209,6 +208,40 @@ class AllPlanet {
         this.gl.enableVertexAttribArray(this.colorAttributeLocation)
 
         this.gl.drawElements(this.gl.TRIANGLES, this.planets.length * 6, this.gl.UNSIGNED_SHORT, 0)
+    }
+}
+
+class Sky {
+    constructor(gl, shaderProgram) {
+        this.gl = gl
+        this.shaderProgram = shaderProgram
+
+        this.shaderProgram.use()
+
+        this.vertices = [
+            -1, -1, 0,
+             1, -1, 0,
+             1,  1, 0,
+            -1, -1, 0,
+             1,  1, 0,
+            -1,  1, 0
+        ]
+
+        this.vertexBuffer = this.gl.createBuffer()
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer)
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.vertices), this.gl.STATIC_DRAW)
+
+        this.positionAttributeLocation = this.gl.getAttribLocation(this.shaderProgram.program, "a_position")
+    }
+
+    draw() {
+        this.shaderProgram.use()
+
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer)
+        this.gl.vertexAttribPointer(this.positionAttributeLocation, 3, this.gl.FLOAT, false, 0, 0)
+        this.gl.enableVertexAttribArray(this.positionAttributeLocation)
+
+        this.gl.drawArrays(this.gl.TRIANGLE, 0, 6)
     }
 }
 
